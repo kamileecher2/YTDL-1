@@ -209,7 +209,7 @@ def auto_restart():
     method_list = [getattr(det, func) for func in dir(det) if func.endswith("_detector")]
     for method in method_list:
         if method():
-            logging.critical("Bye bye world!☠️")
+            logging.critical("Güle güle!☠️")
             for item in pathlib.Path(tempfile.gettempdir()).glob("ytdl-*"):
                 shutil.rmtree(item, ignore_errors=True)
 
