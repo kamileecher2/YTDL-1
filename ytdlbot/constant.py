@@ -18,7 +18,7 @@ from utils import get_func_queue
 
 
 class BotText:
-    start = "YouTube İndirme botuna hoş geldiniz. Daha fazla bilgi için /help yazın."
+    start = "YouTube İndirme botuna hoş geldiniz\n\n Youtube Video Link\nYoutube Playlist\nYoutube Kanal\n\n Yardım @kamileecherch"
 
     help = f"""
 1. This bot should works at all times. If it doesn't, try to send the link again or DM @BennyThink
