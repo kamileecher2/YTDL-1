@@ -110,7 +110,7 @@ def subscribe_handler(client: "Client", message: "types.Message"):
             result = vip.subscribe_channel(chat_id, link)
         except (IndexError, ValueError):
             result = f"Error: \n{traceback.format_exc()}"
-    client.send_message(chat_id, result or "You have no subscription.", disable_web_page_preview=True)
+    client.send_message(chat_id, result or "aboneliğiniz yok.", disable_web_page_preview=True)
 
 
 @app.on_message(filters.command(["unsub"]))
@@ -125,9 +125,9 @@ def unsubscribe_handler(client: "Client", message: "types.Message"):
 
     rows = vip.unsubscribe_channel(chat_id, text[1])
     if rows:
-        text = f"Unsubscribed from {text[1]}"
+        text = f"Abonelikten çıkıldı {text[1]}"
     else:
-        text = "Unable to find the channel."
+        text = "kanal bulunamadı."
     client.send_message(chat_id, text, disable_web_page_preview=True)
 
 
@@ -142,12 +142,12 @@ def patch_handler(client: "Client", message: "types.Message"):
         hot_patch()
 
 
-@app.on_message(filters.command(["ping"]))
+@app.on_message(filters.command(["status"]))
 def ping_handler(client: "Client", message: "types.Message"):
     chat_id = message.chat.id
     client.send_chat_action(chat_id, "typing")
     if os.uname().sysname == "Darwin" or ".heroku" in os.getenv("PYTHONHOME", ""):
-        bot_info = "ping unavailable."
+        bot_info = "ping kullanılamıyor."
     else:
         bot_info = get_runtime("ytdlbot_ytdl_1", "YouTube-dl")
     if message.chat.username == OWNER:
@@ -187,7 +187,7 @@ def direct_handler(client: "Client", message: "types.Message"):
     logging.info("direct start %s", url)
     if not re.findall(r"^https?://", url.lower()):
         Redis().update_metrics("bad_request")
-        message.reply_text("Send me a DIRECT LINK.", quote=True)
+        message.reply_text("DOĞRUDAN BAĞLANTI gönder.", quote=True)
         return
 
     bot_msg = message.reply_text("Request received.", quote=True)
@@ -202,23 +202,23 @@ def settings_handler(client: "Client", message: "types.Message"):
     data = get_user_settings(str(chat_id))
     set_mode = (data[-1])
     text = {"Local": "Celery", "Celery": "Local"}.get(set_mode, "Local")
-    mode_text = f"Download mode: **{set_mode}**"
+    mode_text = f"İndirme modu: **{set_mode}**"
     if message.chat.username == OWNER:
-        extra = [InlineKeyboardButton(f"Change download mode to {text}", callback_data=text)]
+        extra = [InlineKeyboardButton(f"İndirme modunu şu şekilde değiştir: {text}", callback_data=text)]
     else:
         extra = []
 
     markup = InlineKeyboardMarkup(
         [
             [  # First row
-                InlineKeyboardButton("send as document", callback_data="document"),
-                InlineKeyboardButton("send as video", callback_data="video"),
-                InlineKeyboardButton("send as audio", callback_data="audio")
+                InlineKeyboardButton("Doc", callback_data="document"),
+                InlineKeyboardButton("Vid", callback_data="video"),
+                InlineKeyboardButton("Audio", callback_data="audio")
             ],
             [  # second row
-                InlineKeyboardButton("High Quality", callback_data="high"),
-                InlineKeyboardButton("Medium Quality", callback_data="medium"),
-                InlineKeyboardButton("Low Quality", callback_data="low"),
+                InlineKeyboardButton("HQ-Ses", callback_data="high"),
+                InlineKeyboardButton("MQ-Ses", callback_data="medium"),
+                InlineKeyboardButton("LQ-Ses", callback_data="low"),
             ],
             extra
         ]
@@ -256,11 +256,11 @@ def download_handler(client: "Client", message: "types.Message"):
 
     if not re.findall(r"^https?://", url.lower()):
         red.update_metrics("bad_request")
-        message.reply_text("I think you should send me a link.", quote=True)
+        message.reply_text("Bana bir link göndermelisin.", quote=True)
         return
 
     if re.findall(r"^https://www\.youtube\.com/channel/", VIP.extract_canonical_link(url)):
-        message.reply_text("Channel download is disabled now. Please send me individual video link.", quote=True)
+        message.reply_text("Kanal indirme şimdi devre dışı. Lütfen bana bireysel video bağlantısı gönderin.", quote=True)
         red.update_metrics("reject_channel")
         return
 
@@ -273,12 +273,12 @@ def download_handler(client: "Client", message: "types.Message"):
     except pyrogram.errors.Flood as e:
         f = BytesIO()
         f.write(str(e).encode())
-        f.write(b"Your job will be done soon. Just wait! Don't rush.")
-        f.name = "Please don't flood me.txt"
-        bot_msg = message.reply_document(f, caption=f"Flood wait! Please wait {e.x} seconds...."
-                                                    f"Your job will start automatically", quote=True)
+        f.write(b"İşiniz yakında yapılacak. Sadece bekle! acele etme.")
+        f.name = "Lütfen flood yapma me.txt"
+        bot_msg = message.reply_document(f, caption=f"Flood bekle! Lütfen {e.x} Sn...."
+                                                    f"İşiniz otomatik olarak başlayacak", quote=True)
         f.close()
-        client.send_message(OWNER, f"Flood wait! 🙁 {e.x} seconds....")
+        client.send_message(OWNER, f"Bekle! 🙁 {e.x} Sn....")
         time.sleep(e.x)
 
     client.send_chat_action(chat_id, 'upload_video')
@@ -291,7 +291,7 @@ def send_method_callback(client: "Client", callback_query: types.CallbackQuery):
     data = callback_query.data
     logging.info("Setting %s file type to %s", chat_id, data)
     set_user_settings(chat_id, "method", data)
-    callback_query.answer(f"Your send type was set to {callback_query.data}")
+    callback_query.answer(f"Gönderme türünüz ayarlandı: {callback_query.data}")
 
 
 @app.on_callback_query(filters.regex(r"high|medium|low"))
@@ -300,12 +300,12 @@ def download_resolution_callback(client: "Client", callback_query: types.Callbac
     data = callback_query.data
     logging.info("Setting %s file type to %s", chat_id, data)
     set_user_settings(chat_id, "resolution", data)
-    callback_query.answer(f"Your default download quality was set to {callback_query.data}")
+    callback_query.answer(f"Gönderme türünüz ayarlandı {callback_query.data}")
 
 
 @app.on_callback_query(filters.regex(r"convert"))
 def audio_callback(client: "Client", callback_query: types.CallbackQuery):
-    callback_query.answer(f"Converting to audio...please wait patiently")
+    callback_query.answer(f"Sese dönüştürülüyor...lütfen sabırla bekleyin")
     Redis().update_metrics("audio_request")
 
     msg = callback_query.message
@@ -316,7 +316,7 @@ def audio_callback(client: "Client", callback_query: types.CallbackQuery):
 def owner_local_callback(client: "Client", callback_query: types.CallbackQuery):
     chat_id = callback_query.message.chat.id
     set_user_settings(chat_id, "mode", callback_query.data)
-    callback_query.answer(f"Download mode was changed to {callback_query.data}")
+    callback_query.answer(f"Gönderme türünüz ayarlandı {callback_query.data}")
 
 
 def periodic_sub_check():
@@ -324,9 +324,9 @@ def periodic_sub_check():
     for cid, uids in vip.group_subscriber().items():
         video_url = vip.has_newer_update(cid)
         if video_url:
-            logging.info(f"periodic update:{video_url} - {uids}")
+            logging.info(f"periyodik güncelleme:{video_url} - {uids}")
             for uid in uids:
-                bot_msg = app.send_message(uid, f"{video_url} is downloading...", disable_web_page_preview=True)
+                bot_msg = app.send_message(uid, f"{video_url} indiriyor...", disable_web_page_preview=True)
                 ytdl_download_entrance(bot_msg, app, video_url)
                 time.sleep(random.random())
 
@@ -346,7 +346,7 @@ if __name__ == '__main__':
  ▌  ▌ ▌ ▌ ▌  ▌  ▌ ▌ ▌ ▌ ▛▀  ▌ ▌ ▌ ▌ ▐▐▐  ▌ ▌ ▐  ▌ ▌ ▞▀▌ ▌ ▌
  ▘  ▝▀  ▝▀▘  ▘  ▝▀▘ ▀▀  ▝▀▘ ▀▀  ▝▀   ▘▘  ▘ ▘  ▘ ▝▀  ▝▀▘ ▝▀▘
 
-By @BennyThink, VIP mode: {ENABLE_VIP}, Distribution: {ENABLE_CELERY}
+By @kamileecher, VIP mode: {ENABLE_VIP}, Distribution: {ENABLE_CELERY}
 Version: {get_revision()}
     """
     print(banner)
