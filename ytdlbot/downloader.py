@@ -35,7 +35,7 @@ apply_log_formatter()
 
 
 def sizeof_fmt(num: int, suffix='B'):
-    for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+    for unit in ['', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb']:
         if abs(num) < 1024.0:
             return "%3.1f%s%s" % (num, unit, suffix)
         num /= 1024.0
@@ -73,6 +73,7 @@ def tqdm_progress(desc, total, finished, speed="", eta=""):
 {more("🔻 Indirilen:", detail)}
 {more("⚡️ Hız:", speed)}
 {more("⏰ Zaman:", eta)}
+
     """
     f.close()
     return text
