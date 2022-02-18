@@ -100,14 +100,14 @@ def download_hook(d: dict, bot_msg):
             if result is False:
                 raise ValueError(err_msg)
         eta = remove_bash_color(d.get("_eta_str", d.get("eta")))
-        text = tqdm_progress("Downloading...", total, downloaded, speed, eta)
+        text = tqdm_progress("⏬ Indiriliyor...", total, downloaded, speed, eta)
         edit_text(bot_msg, text)
         r.set(key, "ok", ex=5)
 
 
 def upload_hook(current, total, bot_msg):
     # filesize = sizeof_fmt(total)
-    text = tqdm_progress("Uploading...", total, current)
+    text = tqdm_progress("⏫ Yukleniyor...", total, current)
     edit_text(bot_msg, text)
 
 
@@ -139,7 +139,7 @@ def convert_to_mp4(resp: dict, bot_msg):
                         bot_msg.chat.id,
                         "You're not VIP, so you can't convert longer video to streaming formats.")
                     break
-                edit_text(bot_msg, f"{current_time()}: Converting {path.name} to mp4. Please wait.")
+                edit_text(bot_msg, f"{current_time()}: Video {path.name} mp4'e Donuşturuluyor. Lütfen bekle.")
                 new_file_path = path.with_suffix(".mp4")
                 logging.info("Detected %s, converting to mp4...", mime)
                 subprocess.check_output(["ffmpeg", "-y", "-i", path, new_file_path])
