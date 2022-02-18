@@ -166,7 +166,7 @@ def direct_normal_download(bot_msg, client, url):
         except (TypeError, requests.exceptions.RequestException):
             length = 0
         if remain < length:
-            bot_msg.reply_text(f"Sorry, you have reached your quota.\n")
+            bot_msg.reply_text(f"Üzgünüz, kotanıza ulaştınız.\n")
             return
 
     req = None
@@ -177,7 +177,7 @@ def direct_normal_download(bot_msg, client, url):
     except TypeError:
         filename = getattr(req, "url", "").rsplit("/")[-1]
     except Exception as e:
-        bot_msg.edit_text(f"Download failed!❌\n\n```{e}```", disable_web_page_preview=True)
+        bot_msg.edit_text(f"Indirme Hatalı!❌\n\n```{e}```", disable_web_page_preview=True)
         return
 
     if not filename:
@@ -188,7 +188,7 @@ def direct_normal_download(bot_msg, client, url):
         # consume the req.content
         downloaded = 0
         for chunk in req.iter_content(1024 * 1024):
-            text = tqdm_progress("Downloading...", length, downloaded)
+            text = tqdm_progress("⏬ Indiriliyor...", length, downloaded)
             edit_text(bot_msg, text)
             with open(filepath, "ab") as fp:
                 fp.write(chunk)
@@ -202,7 +202,7 @@ def direct_normal_download(bot_msg, client, url):
                              caption=f"filesize: {sizeof_fmt(st_size)}",
                              progress=upload_hook, progress_args=(bot_msg,),
                              )
-        bot_msg.edit_text(f"Download success!✅")
+        bot_msg.edit_text(f"✅ İndirme Tamamlandı!")
 
 
 def normal_audio(bot_msg, client):
@@ -232,7 +232,7 @@ def normal_audio(bot_msg, client):
 def get_dl_source():
     worker_name = os.getenv("WORKER_NAME")
     if worker_name:
-        return f"Downloaded by  {worker_name}"
+        return f"👤 Kullanıcı  {worker_name}"
     return ""
 
 
@@ -244,7 +244,7 @@ def upload_transfer_sh(paths: list) -> "str":
         req = requests.post("https://transfer.sh", data=m, headers=headers)
         return re.sub(r"https://", "\nhttps://", req.text)
     except requests.exceptions.RequestException as e:
-        return f"Upload failed!❌\n\n```{e}```"
+        return f"Yükleme Hatalı!❌\n\n```{e}```"
 
 
 def ytdl_normal_download(bot_msg, client, url):
@@ -258,7 +258,7 @@ def ytdl_normal_download(bot_msg, client, url):
         [
             [  # First row
                 InlineKeyboardButton(  # Generates a callback query when pressed
-                    f"convert to audio({AUDIO_FORMAT})",
+                    f"Ses Dönüştür [ {AUDIO_FORMAT} ]",
                     callback_data="convert"
                 )
             ]
@@ -267,7 +267,7 @@ def ytdl_normal_download(bot_msg, client, url):
     if result["status"]:
         client.send_chat_action(chat_id, 'upload_document')
         video_paths = result["filepath"]
-        bot_msg.edit_text('Download complete. Sending now...')
+        bot_msg.edit_text('İndirme tamamlandı. Gönderiliyor...')
         for video_path in video_paths:
             # normally there's only one video in that path...
             filename = video_path.name
@@ -275,7 +275,7 @@ def ytdl_normal_download(bot_msg, client, url):
             st_size = os.stat(video_path).st_size
             size = sizeof_fmt(st_size)
             if st_size > TG_MAX_SIZE:
-                t = f"Your video size is {size} which is too large for Telegram. I'll upload it to transfer.sh"
+                t = f"Video boyutunuz {size} bu Telegram için çok büyük. Transfer.sh'a yükleyeceğim"
                 bot_msg.edit_text(t)
                 client.send_chat_action(chat_id, 'upload_document')
                 client.send_message(chat_id, upload_transfer_sh(video_paths))
@@ -283,7 +283,7 @@ def ytdl_normal_download(bot_msg, client, url):
 
             meta = get_metadata(video_path)
             worker = get_dl_source()
-            cap = f"`{filename}`\n\n{url}\n\nInfo: {meta['width']}x{meta['height']} {size} {meta['duration']}s" \
+            cap = f"`{filename}`\n\n{url}\n\n📙 Bilgi: {meta['width']}x{meta['height']} {size} {meta['duration']}s" \
                   f"\n{remain}\n{worker}"
             settings = get_user_settings(str(chat_id))
             if ARCHIVE_ID:
@@ -317,11 +317,11 @@ def ytdl_normal_download(bot_msg, client, url):
             red.update_metrics("video_success")
             if ARCHIVE_ID:
                 client.forward_messages(bot_msg.chat.id, ARCHIVE_ID, res_msg.message_id)
-        bot_msg.edit_text('Download success!✅')
+        bot_msg.edit_text('✅ İndirme Tamamlandı!')
     else:
         client.send_chat_action(chat_id, 'typing')
         tb = result["error"][0:4000]
-        bot_msg.edit_text(f"Download failed!❌\n\n```{tb}```", disable_web_page_preview=True)
+        bot_msg.edit_text(f"Yükleme Hatalı!❌\n\n```{tb}```", disable_web_page_preview=True)
 
     temp_dir.cleanup()
 
