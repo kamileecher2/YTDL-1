@@ -18,7 +18,7 @@ from utils import get_func_queue
 
 
 class BotText:
-    start = "YouTube İndirme Botuna Hoş Geldiniz\n\n🚦 Youtube Video Link\n🚦 Youtube Playlist\n🚦 Youtube Kanal\n\n★ Bana Link Olarak Gonder\n\n★ Bir Link At ve Bekle\n★ Indirmeniz Tam Bitmeden Baska Link Atmayin\n☞ Destek @kamileecherch"
+    start = "📢 YouTube Botuna Hoş Geldiniz\n\n🚦 Youtube Video Link\n🚦 Youtube Playlist\n🚦 Youtube Kanal\n🚦 Youtube Short Link\n🚦 /direct https//kami.zip\n\n★ Bana Link Olarak Gonder\n\n★ Bir Link At ve Bekle\n★ Indirmeniz Tam Bitmeden Baska Link Atmayin\n☞ Destek @kamileecherch"
 
     help = f"""
 1. This bot should works at all times. If it doesn't, try to send the link again or DM @BennyThink
