@@ -283,7 +283,7 @@ def ytdl_normal_download(bot_msg, client, url):
 
             meta = get_metadata(video_path)
             worker = get_dl_source()
-            cap = f"`📕 Adi: {filename}`\n\nℹ Bilgi: {meta['width']}x{meta['height']} {size} {meta['duration']}s" \
+            cap = f"`📕Adi: {filename}`\n\nℹBilgi: {meta['width']}x{meta['height']} {size} {meta['duration']}s" \
                   f"\n{remain}\n{worker}"
             settings = get_user_settings(str(chat_id))
             if ARCHIVE_ID:
