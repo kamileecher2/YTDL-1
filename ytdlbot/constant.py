@@ -18,7 +18,7 @@ from utils import get_func_queue
 
 
 class BotText:
-    start = "YouTube İndirme Botuna Hoş Geldiniz\n\n🚦 Youtube Video Link\n🚦 Youtube Playlist\n🚦 Youtube Kanal\n\n★ Bunlardan Herhangi Birini Bana Link Olarak Gonder\n\n☞ Destek @kamileecherch"
+    start = "YouTube İndirme Botuna Hoş Geldiniz\n\n🚦 Youtube Video Link\n🚦 Youtube Playlist\n🚦 Youtube Kanal\n\n★ Bana Link Olarak Gonder\n\n★Bir Link At ve Bekle\n★Indirmeniz Tam Bitmeden Baska Link Atmayin☞ Destek @kamileecherch"
 
     help = f"""
 1. This bot should works at all times. If it doesn't, try to send the link again or DM @BennyThink
@@ -122,7 +122,7 @@ Gönderme Biçimi: **{1}**
         if ENABLE_CELERY and reserved:
             text = f"Çok fazla görev. Görevleriniz ayrılmış sıraya eklendi {reserved}."
         else:
-            text = "☞ Göreviniz aktif sıraya eklendi.\n🚦 İşleniyor...\n\n"
+            text = "☞ Göreviniz Sıraya Eklendi.\n🚦 İşleniyor...\n\n"
 
         return text
 
